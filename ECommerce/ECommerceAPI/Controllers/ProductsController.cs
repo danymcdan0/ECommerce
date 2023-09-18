@@ -69,5 +69,27 @@ namespace ECommerceAPI.Controllers
 			await dbContext.SaveChangesAsync();
 			return Ok(mapper.Map<UpdateProductDTO>(existingProduct));
 		}
+
+		[HttpDelete]
+		[Route("{ID:Guid}")]
+		public async Task<IActionResult> DeleteByIdAsync(Guid ID) {
+			var existingProduct = await dbContext.Products.FirstOrDefaultAsync(o => o.ID == ID);
+			if (existingProduct == null)
+			{
+				return NotFound("Cannot Delete, Product does not exist");
+			}
+			dbContext.Remove(existingProduct);
+			await dbContext.SaveChangesAsync();
+			return Ok(mapper.Map<ProductDTO>(existingProduct));
+		}
+
+		[HttpDelete]
+		public async Task<IActionResult> DeleteAllAsync()
+		{
+			var products = await dbContext.Products.ToListAsync();
+			dbContext.RemoveRange(products);
+			await dbContext.SaveChangesAsync();
+			return Ok(mapper.Map<List<ProductDTO>>(products));
+		}
 	}
 }
