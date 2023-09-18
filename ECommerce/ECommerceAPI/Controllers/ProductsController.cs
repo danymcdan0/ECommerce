@@ -1,12 +1,25 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using ECommerceAPI.Data;
+using ECommerceAPI.Models.Domains;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace ECommerceAPI.Controllers
 {
+	[Route("api/[controller]")]
+	[ApiController]
 	public class ProductsController : Controller
 	{
-		public IActionResult Index()
+		private readonly ECommerceDbContext dbContext;
+
+		public ProductsController(ECommerceDbContext dbContext) {
+			this.dbContext = dbContext;
+		}
+		[HttpGet]
+		public async Task<IActionResult> GetAll() 
 		{
-			return View();
+			var products = await dbContext.Products.ToListAsync();
+
+			return Ok(products);
 		}
 	}
 }

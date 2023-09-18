@@ -1,6 +1,6 @@
 ﻿namespace ECommerceAPI.Models.Domains
 {
-	public class Basket
+	public class BasketDTO
 	{
 		public Guid OwnerID { get; set; }
 
