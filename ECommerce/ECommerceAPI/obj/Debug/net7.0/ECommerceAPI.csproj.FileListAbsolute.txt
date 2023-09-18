@@ -80,3 +80,5 @@ Y:\SpartaGlobal\ECommerce\ECommerce\ECommerceAPI\obj\Debug\net7.0\refint\ECommer
 Y:\SpartaGlobal\ECommerce\ECommerce\ECommerceAPI\obj\Debug\net7.0\ECommerceAPI.pdb
 Y:\SpartaGlobal\ECommerce\ECommerce\ECommerceAPI\obj\Debug\net7.0\ECommerceAPI.genruntimeconfig.cache
 Y:\SpartaGlobal\ECommerce\ECommerce\ECommerceAPI\obj\Debug\net7.0\ref\ECommerceAPI.dll
+Y:\SpartaGlobal\ECommerce\ECommerce\ECommerceAPI\bin\Debug\net7.0\AutoMapper.dll
+Y:\SpartaGlobal\ECommerce\ECommerce\ECommerceAPI\bin\Debug\net7.0\AutoMapper.Extensions.Microsoft.DependencyInjection.dll
