@@ -49,5 +49,25 @@ namespace ECommerceAPI.Controllers
 			await dbContext.SaveChangesAsync();
 			return Ok(mapper.Map<ProductDTO>(domainProduct));
 		}
+
+		[HttpPut]
+		[Route("{ID:Guid}")]
+		public async Task<IActionResult> UpdateByIdAsync(Guid ID, UpdateProductDTO updateProductDTO) {
+			var existingProduct = await dbContext.Products.FirstOrDefaultAsync(o => o.ID == ID);
+			if (existingProduct == null)
+			{
+				return NotFound("Cannot Update, Product does not exist");
+			}
+			existingProduct.Name = updateProductDTO.Name;
+			existingProduct.Url = updateProductDTO.Url;
+			existingProduct.ImageUrl = updateProductDTO.ImageUrl;
+			existingProduct.Company = updateProductDTO.Company;
+			existingProduct.Quantity = updateProductDTO.Quantity;
+			existingProduct.Price = updateProductDTO.Price;
+			existingProduct.Sale = updateProductDTO.Sale;
+
+			await dbContext.SaveChangesAsync();
+			return Ok(mapper.Map<UpdateProductDTO>(existingProduct));
+		}
 	}
 }

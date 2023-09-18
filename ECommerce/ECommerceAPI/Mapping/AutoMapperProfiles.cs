@@ -9,6 +9,7 @@ namespace ECommerceAPI.Mapping
 		{
 			CreateMap<Product, ProductDTO>().ReverseMap();
 			CreateMap<Product, AddProductDTO>().ReverseMap();
+			CreateMap<Product, UpdateProductDTO>().ReverseMap();
 		}
 	}
 }
