@@ -1,6 +1,7 @@
 
 using ECommerceAPI.Data;
 using ECommerceAPI.Mapping;
+using ECommerceAPI.Repository;
 using Microsoft.EntityFrameworkCore;
 
 namespace ECommerceAPI
@@ -19,6 +20,7 @@ namespace ECommerceAPI
 			builder.Services.AddSwaggerGen();
 
 			builder.Services.AddDbContext<ECommerceDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("ECommerceConnectionString")));
+			builder.Services.AddScoped<IProductsRepository, ProductsRepository>();
 			builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
 
 			var app = builder.Build();

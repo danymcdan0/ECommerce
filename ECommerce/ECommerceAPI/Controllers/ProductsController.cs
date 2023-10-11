@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using ECommerceAPI.Data;
 using ECommerceAPI.Models.Domains;
+using ECommerceAPI.Repository;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,86 +11,75 @@ namespace ECommerceAPI.Controllers
 	[ApiController]
 	public class ProductsController : Controller
 	{
-		private readonly ECommerceDbContext dbContext;
-		private readonly IMapper mapper;
+		private readonly IProductsRepository repository;
 
-		public ProductsController(ECommerceDbContext dbContext, IMapper mapper) {
-			this.dbContext = dbContext;
-			this.mapper = mapper;
+		public ProductsController(IProductsRepository repository) {
+			this.repository = repository;
 		}
 
 		[HttpGet]
 		public async Task<IActionResult> GetAllAsync() 
 		{
-			var products = await dbContext.Products.ToListAsync();
-
-			return Ok(products);
+			var products = await repository.GetAllAsync();
+			if (products != null)
+			{
+				return Ok(products);
+			}
+			else
+			{
+				return NotFound("ERROR: No products exist");
+			}
 		}
 
 		[HttpGet]
-		[Route("{ID:Guid}")]
-		public async Task<IActionResult> GetByIdAsync([FromRoute] Guid ID) {
-			var domainProduct = await dbContext.Products.FirstOrDefaultAsync(o => o.ID == ID);
+		[Route("{id:Guid}")]
+		public async Task<IActionResult> GetByIdAsync([FromRoute] Guid id) {
+			var domainProduct = await repository.GetByIdAsync(id);
 			if (domainProduct == null)
 			{
-				return NotFound("Product does not exist");
+				return NotFound("ERROR: Product does not exist");
 			}
-			return Ok(mapper.Map<ProductDTO>(domainProduct));
+			return Ok(domainProduct);
 		}
 
 		[HttpPost]
 		public async Task<IActionResult> CreateAsync([FromBody] AddProductDTO addProductDTO) 
 		{
-			var domainProduct = mapper.Map<Product>(addProductDTO);
-			var createProduct = await dbContext.Products.AddAsync(domainProduct);
+			var createProduct = await repository.CreateAsync(addProductDTO);
 			if (createProduct == null)
 			{
 				return BadRequest();
 			}
-			await dbContext.SaveChangesAsync();
-			return Ok(mapper.Map<ProductDTO>(domainProduct));
+			return Ok(createProduct);
 		}
 
 		[HttpPut]
-		[Route("{ID:Guid}")]
-		public async Task<IActionResult> UpdateByIdAsync(Guid ID, UpdateProductDTO updateProductDTO) {
-			var existingProduct = await dbContext.Products.FirstOrDefaultAsync(o => o.ID == ID);
-			if (existingProduct == null)
+		[Route("{id:Guid}")]
+		public async Task<IActionResult> UpdateByIdAsync(Guid id, UpdateProductDTO updateProductDTO) {
+			var updateProduct = await repository.UpdateByIdAsync(id, updateProductDTO);
+			if (updateProduct == null)
 			{
-				return NotFound("Cannot Update, Product does not exist");
+				return NotFound("ERROR: Product does not exist");
 			}
-			existingProduct.Name = updateProductDTO.Name;
-			existingProduct.Url = updateProductDTO.Url;
-			existingProduct.ImageUrl = updateProductDTO.ImageUrl;
-			existingProduct.Company = updateProductDTO.Company;
-			existingProduct.Quantity = updateProductDTO.Quantity;
-			existingProduct.Price = updateProductDTO.Price;
-			existingProduct.Sale = updateProductDTO.Sale;
-
-			await dbContext.SaveChangesAsync();
-			return Ok(mapper.Map<UpdateProductDTO>(existingProduct));
+			return Ok(updateProduct);
 		}
 
 		[HttpDelete]
-		[Route("{ID:Guid}")]
-		public async Task<IActionResult> DeleteByIdAsync(Guid ID) {
-			var existingProduct = await dbContext.Products.FirstOrDefaultAsync(o => o.ID == ID);
+		[Route("{id:Guid}")]
+		public async Task<IActionResult> DeleteByIdAsync(Guid id) {
+			var existingProduct = await repository.DeleteByIdAsync(id);
 			if (existingProduct == null)
 			{
-				return NotFound("Cannot Delete, Product does not exist");
+				return NotFound("ERROR: Product does not exist");
 			}
-			dbContext.Remove(existingProduct);
-			await dbContext.SaveChangesAsync();
-			return Ok(mapper.Map<ProductDTO>(existingProduct));
+			return Ok(existingProduct);
 		}
 
 		[HttpDelete]
 		public async Task<IActionResult> DeleteAllAsync()
 		{
-			var products = await dbContext.Products.ToListAsync();
-			dbContext.RemoveRange(products);
-			await dbContext.SaveChangesAsync();
-			return Ok(mapper.Map<List<ProductDTO>>(products));
+			var products = await repository.DeleteAllAsync();
+			return Ok(products);
 		}
 	}
 }
